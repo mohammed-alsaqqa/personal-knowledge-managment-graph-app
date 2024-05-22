@@ -1,0 +1,10 @@
+<div
+  hx-vals='{"noteID": "{{note.getId()}}"}'
+  hx-get="/note"
+  hx-trigger="click"
+  hx-swap="innerHTML"
+  hx-target="#note-editor"
+  class="p-2 border-2 rounded-lg hover:bg-violet-100 hover:text-neutral-900 hover:cursor-pointer NOTELINK"
+>
+  {{ note.getTitle() }}
+</div>

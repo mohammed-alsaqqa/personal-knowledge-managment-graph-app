@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <script
+      src="https://unpkg.com/htmx.org@1.9.12"
+      integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="h-screen bg-neutral-900 text-violet-100 m-0 p-0 font-mono">
+    <!-- main body container -->
+    <div class="h-full grid grid-cols-12">
+      <!-- this is the side container where the notes are displayed -->
+      <div class="col-span-2 py-12 px-2 gap-y-2 flex flex-col">
+        {% for note in notes %}
+        <div
+          hx-vals='{"noteID": "{{note.getId()}}"}'
+          hx-get="/note"
+          hx-trigger="click"
+          hx-swap="innerHTML"
+          hx-target="#note-editor"
+          class="p-2 border-2 rounded-lg hover:bg-violet-100 hover:text-neutral-900 hover:cursor-pointer NOTELINK"
+        >
+          {{ note.getTitle() }}
+        </div>
+        {% endfor %}
+        <button
+          hx-post="/create-note"
+          hx-vals='{"TITLE": "RANDOM"}'
+          class="p-2 border-2 rounded-lg hover:bg-violet-300 hover:text-neutral-900"
+          hx-swap="beforebegin"
+          id="NEWNOTEBUTTON"
+        >
+          New Note
+        </button>
+      </div>
+
+      <!-- This is where we will type the markdown -->
+      <div
+        class="h-full rounded-b-lg bg-neutral-900 col-span-5"
+        id="note-editor"
+      >
+        <textarea
+          hx-post="/process-markdown"
+          hx-trigger="input"
+          hx-swap="innerHTML"
+          hx-target="#view-mode"
+          name="markdownText"
+          class="block w-full p-12 text-sm focus:outline-none border-x-2 bg-neutral-900 text-white placeholder-gray-400 resize-none h-full"
+          placeholder="Write your markdown here...."
+        ></textarea>
+      </div>
+
+      <!-- This is the area that the html will show up in -->
+      <div class="leading-loose text-sm p-12 col-span-5" id="view-mode"></div>
+    </div>
+  </body>
+</html>
