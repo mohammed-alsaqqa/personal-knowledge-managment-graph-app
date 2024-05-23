@@ -7,10 +7,12 @@ from fastapi.templating import Jinja2Templates
 import markdown
 from markdownExtension import CustomExtension
 from graph import NOTEGRAPH
+from fastapi.staticfiles import StaticFiles
 
 
 app = FastAPI()
 templates = Jinja2Templates("templates")
+app.mount("/assets", StaticFiles(directory="assets"), name="asset")
 
 
 def set_connected_nodes(markdown_text, src_note):
@@ -82,15 +84,13 @@ async def getNote(request: Request, noteID: str):
             },
         )
 
+
 @app.get("/viz/", response_class=HTMLResponse)
 async def getViz(request: Request):
-    print(NOTEGRAPH)
-    NOTEGRAPH.generate_visualisations()
-    return "success"
-    # return templates.TemplateResponse(
-    #     "snippets/viz.html",
-    #     {"request": request, "notes": NOTEGRAPH.generate_visualisations()},
-    # )
+    url = NOTEGRAPH.generate_visualisations()
+    return templates.TemplateResponse(
+        "snippets/graph.html", {"request": request, "imgpath": url}
+    )
 
 
 @app.post("/create-note/", response_class=HTMLResponse)
@@ -117,9 +117,6 @@ async def create_a_note(request: Request, TITLE: Annotated[str, Form()]):
         "wall",
         "floor",
     ]  # 20*20*20 = 8000 unique
-
-
-
 
     while True:
         name = f"{choice(word_list)}-{choice(word_list)}-{choice(word_list)}"

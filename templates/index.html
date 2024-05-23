@@ -46,7 +46,7 @@
       >
         <textarea
           hx-post="/process-markdown"
-          hx-trigger="input"
+          hx-trigger="input, click from:#SecondaryNoteLoader"
           hx-swap="innerHTML"
           hx-target="#view-mode"
           name="markdownText"
@@ -54,13 +54,26 @@
           placeholder="Write your markdown here...."
         ></textarea>
       </div>
-      <button 
-        hx-get="/viz/"
-        >
-        Visualize
-      </button>
+      <!-- <button hx-get="/viz/">Visualize</button> -->
       <!-- This is the area that the html will show up in -->
-      <div class="leading-loose text-sm p-12 col-span-5" id="view-mode"></div>
+      <div class="col-span-5">
+        <div class="flex justify-start align-center border-b-2">
+          <button
+            class="border-r-2 p-1 hover:bg-violet-300 hover:text-neutral-900"
+            id="SecondaryNoteLoader"
+          >
+            Note View
+          </button>
+          <button
+            class="border-r-2 p-1 hover:bg-violet-300 hover:text-neutral-900"
+            hx-get="/viz"
+            hx-target="#view-mode"
+          >
+            Graph View
+          </button>
+        </div>
+        <div class="leading-loose text-sm p-12" id="view-mode"></div>
+      </div>
     </div>
   </body>
 </html>

@@ -1,8 +1,10 @@
 from typing import Optional
+import time
 import uuid
 import networkx as nx
 import matplotlib.pyplot as plt
 import math
+
 
 # The same as a node in a graph but called note because we are making a note app
 class Note:
@@ -80,10 +82,12 @@ class WeightedNoteGraph:
             string_value += f"{note} -----> {[str(N) + ', ' + str(self.graph[note][N]) for N in self.graph[note]]}\n"
 
         return string_value
-    
+
     def generate_visualisations(self):
         plt.clf()  # Clear the current matplotlib figure
-        G = nx.MultiDiGraph()  # Create a new directed multigraph each time the method is called
+        G = (
+            nx.MultiDiGraph()
+        )  # Create a new directed multigraph each time the method is called
 
         for note in self.graph:
             G.add_node(note)
@@ -91,20 +95,29 @@ class WeightedNoteGraph:
                 G.add_edge(note, connected_note, weight=weight)
 
         pos = nx.spring_layout(G)
-        nx.draw(G, pos, with_labels=True, connectionstyle='arc3, rad = 0.1')
+        nx.draw(G, pos, with_labels=True, connectionstyle="arc3, rad = 0.1")
 
         # Add edge labels manually
         for u, v, key, d in G.edges(keys=True, data=True):
             x = (pos[u][0] + pos[v][0]) / 2
             y = (pos[u][1] + pos[v][1]) / 2
             angle = math.atan2(pos[v][1] - pos[u][1], pos[v][0] - pos[u][0])
-            label_pos = [x + 0.1 * math.cos(angle + math.pi / 2), y + 0.1 * math.sin(angle + math.pi / 2)]
-            plt.text(label_pos[0], label_pos[1], d['weight'])
+            label_pos = [
+                x + 0.1 * math.cos(angle + math.pi / 2),
+                y + 0.1 * math.sin(angle + math.pi / 2),
+            ]
+            plt.text(label_pos[0], label_pos[1], d["weight"])
 
-        plt.savefig("./assets/graph.png")  # or "graph.jpg"
+        url = f"./assets/graph{str(int(time.time()))}.png"
+        plt.savefig(url)  # or "graph.jpg"
+        return url
 
 
 NOTEGRAPH = WeightedNoteGraph()
+NOTEGRAPH.addNote(
+    "Guide",
+    '## How to Use\nThis app allows you to explore linking notes horizontally instead of hierarchically, utilizing graph data structures to make this possible.\n\n<br/>\n### Getting Started\n\nTo begin, click on one of our pre-generated notes or create a new note using the provided button.\n\n<br/>\n### Linking Notes\nYou can link to other notes using the following syntax:\n\n1. **Existing Note**: Links to existing notes appear in purple on the right-hand side. Example: [[Note-Taking]]\n2. **Non-Existing Note**: Links to notes that do not yet exist appear in red. Example: [[new-example]]. This is useful for notes you plan to create in the future.\n### Interacting with Links\n- **Clickable Links**: The links on the right-hand side are clickable.\n- **Red Links**: Clicking on red links (notes not yet created) will automatically generate a new note for you. We recommend this method over creating notes manually, as it makes note-taking a more natural extension of your thinking process.\n\n<br/>\n### Graph View\n1. Access the graph view by clicking the "Graph View" button on the right-hand side.\n2. To return to the note view, click "Note View."',
+)
 NOTEGRAPH.addNote(
     "Note-Taking",
     '### Note-Taking\n\nUsing graph data structures for note-taking enhances the organization and retrieval of information. Traditional linear note-taking methods often lead to fragmented and hard-to-navigate information. In contrast, graph-based note-taking allows each note to act as a node, with relationships between notes forming edges. This structure supports linking related concepts, topics, and ideas dynamically, reflecting the way knowledge and thoughts are interconnected.\n\nFor instance, a note about "Photosynthesis" can be linked to related notes on "Chlorophyll," "Plant Biology," and "Energy Conversion," creating a comprehensive network of information. This interconnected approach can be further explored through the concept of a [[Personal-Web]] and benefits from the underlying structure of a [[Graph-Data-Structure]].',

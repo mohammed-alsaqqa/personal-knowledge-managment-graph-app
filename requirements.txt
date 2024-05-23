@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+markdown
+jinja2
+python-multipart
+matplotlib
+networkx
