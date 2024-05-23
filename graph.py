@@ -1,6 +1,8 @@
 from typing import Optional
 import uuid
-
+import networkx as nx
+import matplotlib.pyplot as plt
+import math
 
 # The same as a node in a graph but called note because we are making a note app
 class Note:
@@ -80,7 +82,26 @@ class WeightedNoteGraph:
         return string_value
     
     def generate_visualisations(self):
-        pass
+        plt.clf()  # Clear the current matplotlib figure
+        G = nx.MultiDiGraph()  # Create a new directed multigraph each time the method is called
+
+        for note in self.graph:
+            G.add_node(note)
+            for connected_note, weight in self.graph[note].items():
+                G.add_edge(note, connected_note, weight=weight)
+
+        pos = nx.spring_layout(G)
+        nx.draw(G, pos, with_labels=True, connectionstyle='arc3, rad = 0.1')
+
+        # Add edge labels manually
+        for u, v, key, d in G.edges(keys=True, data=True):
+            x = (pos[u][0] + pos[v][0]) / 2
+            y = (pos[u][1] + pos[v][1]) / 2
+            angle = math.atan2(pos[v][1] - pos[u][1], pos[v][0] - pos[u][0])
+            label_pos = [x + 0.1 * math.cos(angle + math.pi / 2), y + 0.1 * math.sin(angle + math.pi / 2)]
+            plt.text(label_pos[0], label_pos[1], d['weight'])
+
+        plt.savefig("./assets/graph.png")  # or "graph.jpg"
 
 
 NOTEGRAPH = WeightedNoteGraph()

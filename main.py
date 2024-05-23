@@ -84,10 +84,13 @@ async def getNote(request: Request, noteID: str):
 
 @app.get("/viz/", response_class=HTMLResponse)
 async def getViz(request: Request):
-    return templates.TemplateResponse(
-        "snippets/viz.html",
-        {"request": request, "notes": NOTEGRAPH.generate_visualisations()},
-    )
+    print(NOTEGRAPH)
+    NOTEGRAPH.generate_visualisations()
+    return "success"
+    # return templates.TemplateResponse(
+    #     "snippets/viz.html",
+    #     {"request": request, "notes": NOTEGRAPH.generate_visualisations()},
+    # )
 
 
 @app.post("/create-note/", response_class=HTMLResponse)
